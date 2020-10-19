@@ -31,7 +31,7 @@ class WeatherView(APIView):
 
 
     def __get_all_day_date(self, finishDate):
-        """функция прибаваляет время до конца дня,
+        """функция прибавляет время до конца дня,
         чтобы база выводила все значения за выбранный день"""
         if type(finishDate) == str:
             datetime_date = datetime.strptime(finishDate, '%Y-%m-%d')
