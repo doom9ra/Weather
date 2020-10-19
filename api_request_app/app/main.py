@@ -64,7 +64,7 @@ def main():
     db_conn.close()
 
 if __name__ == '__main__':
-    # выставлем таймер на апрос API каждый час
+    # выставлем таймер на опрос API каждый час
     schedule.every().hour.do(main)
 
     while True:
