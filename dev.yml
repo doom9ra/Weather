@@ -1,0 +1,55 @@
+version: "3.4"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
+    restart: always
+    container_name: weather_frontend
+    command: sh -c "npm run dev"
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: weather_backend
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    restart: always
+    ports:
+      - 8000:8000
+    links:
+      - db
+    depends_on:
+      - db
+    env_file:
+      - ./environments/postgres.env
+      - ./environments/backend.dev.env   
+
+  db:
+    image: postgres:12-alpine
+    container_name: weather_db
+    volumes:
+     - /home/dev/postgres_data/weather_app/:/var/lib/postgresql/data/
+    env_file:
+      - ./environments/postgres.env
+    expose:
+      - 5432
+
+  api_request_app:
+    build:
+      context: ./api_request_app
+      dockerfile: Dockerfile
+    container_name: weather_api_request_app
+    command: python main.py
+    restart: always
+    links:
+      - db
+    depends_on:
+      - db
+    env_file:
+      - ./environments/postgres.env

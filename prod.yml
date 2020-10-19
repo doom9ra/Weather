@@ -1,0 +1,54 @@
+version: '3.4'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: prod.Dockerfile
+    restart: always
+    container_name: weather_frontend
+    ports:
+      - 80:8080
+    depends_on:
+      - backend  
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: weather_backend
+    command: sh -c "gunicorn config.wsgi --bind 0.0.0.0:8000"
+    restart: always
+    ports:
+      - 8000:8000
+    links:
+      - db
+    depends_on:
+      - db
+    env_file:
+      - ./environments/postgres.env
+      - ./environments/backend.prod.env  
+
+  db:
+    image: postgres:12-alpine
+    container_name: weather_db
+    volumes:
+     - /home/dev/postgres_data/weather_app/:/var/lib/postgresql/data/
+    env_file:
+      - ./environments/postgres.env
+    expose:
+      - 5432
+
+  api_request_app:
+    build:
+      context: ./api_request_app
+      dockerfile: Dockerfile
+    container_name: weather_api_request_app
+    command: python main.py
+    restart: always
+    links:
+      - db
+    depends_on:
+      - db
+    env_file:
+      - ./environments/postgres.env

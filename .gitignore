@@ -1,0 +1,8 @@
+frontend/app/node_modules
+frontend/app/build
+backend/env
+backend/app/config/__pycache__
+backend/app/dashboard/__pycache__
+backend/app/dashboard/migrations/__pycache__
+api_request_app/env
+api_request_app/app/__pycache__
